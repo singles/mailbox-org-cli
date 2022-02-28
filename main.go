@@ -57,7 +57,7 @@ func main() {
 		})
 	})
 
-	addressesJson, err := json.Marshal(addresses)
+	addressesJson, err := json.MarshalIndent(addresses, "", "  ")
 
 	if err != nil {
 		fmt.Println(err)
