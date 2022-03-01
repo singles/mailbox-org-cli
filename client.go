@@ -6,6 +6,9 @@ import (
 	"gopkg.in/headzoo/surf.v1"
 )
 
+const ACTION_DELETE = "delete"
+const ACTION_RENEW = "renew"
+
 type Address struct {
 	Email   string `json:"email"`
 	Memo    string `json:"memo"`
@@ -64,9 +67,7 @@ func (c *Client) Create() Address {
 }
 
 func (c *Client) Extend(id string) Address {
-	selector := c.browser.Find(".ox-list input[type=hidden][name=id][value='" + id + "']").Parent()
-
-	fm := browser.NewForm(c.browser, selector)
+	fm := c.getFormForAction(id, ACTION_RENEW)
 	err := fm.Submit()
 	if err != nil {
 		panic(err)
@@ -79,4 +80,18 @@ func (c *Client) Extend(id string) Address {
 	}
 
 	return Address{}
+}
+
+func (c *Client) Delete(id string) {
+	fm := c.getFormForAction(id, ACTION_DELETE)
+	err := fm.Submit()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (c *Client) getFormForAction(id, action string) *browser.Form {
+	selector := c.browser.Find(".ox-list .actions input[name=action][value=" + action + "] + input[input[type=hidden][name=id][value='" + id + "']").Parent()
+
+	return browser.NewForm(c.browser, selector)
 }
