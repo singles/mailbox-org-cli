@@ -23,7 +23,7 @@ func main() {
 
 	client := NewClient(*username, password)
 
-	data := client.Create()
+	data := client.Extend("id")
 	output, err := json.MarshalIndent(data, "", "  ")
 
 	if err != nil {

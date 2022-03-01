@@ -62,3 +62,21 @@ func (c *Client) Create() Address {
 
 	return addresses[len(addresses)-1]
 }
+
+func (c *Client) Extend(id string) Address {
+	selector := c.browser.Find(".ox-list input[type=hidden][name=id][value='" + id + "']").Parent()
+
+	fm := browser.NewForm(c.browser, selector)
+	err := fm.Submit()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, address := range c.List() {
+		if address.Email == id {
+			return address
+		}
+	}
+
+	return Address{}
+}
