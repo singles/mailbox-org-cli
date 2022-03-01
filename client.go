@@ -51,3 +51,14 @@ func (c *Client) List() []Address {
 
 	return addresses
 }
+
+func (c *Client) Create() Address {
+	fm, err := c.browser.Form("#content > form")
+	if fm.Submit() != nil {
+		panic(err)
+	}
+
+	addresses := c.List()
+
+	return addresses[len(addresses)-1]
+}

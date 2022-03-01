@@ -23,13 +23,14 @@ func main() {
 
 	client := NewClient(*username, password)
 
-	addressesJson, err := json.MarshalIndent(client.List(), "", "  ")
+	data := client.Create()
+	output, err := json.MarshalIndent(data, "", "  ")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(string(addressesJson))
+	fmt.Println(string(output))
 }
 
 func readPasswordFromStdin(stdin io.Reader) string {
