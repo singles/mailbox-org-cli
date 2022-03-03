@@ -67,32 +67,29 @@ func (c *Client) Create(memo string) Address {
 		c.SetMemo(newAddress.Email, memo)
 	}
 
-	for _, address := range c.List() {
-		if address.Email == newAddress.Email {
-			return address
-		}
-	}
-
-	return Address{}
+	return c.findAddressByID(newAddress.Email)
 }
 
 func (c *Client) Renew(id string) Address {
 	body := url.Values{"action": []string{"renew"}, "id": []string{id}}
 	c.browser.PostForm(MANAGEMENT_URL, body)
 
-	for _, address := range c.List() {
-		if address.Email == id {
-			return address
-		}
-	}
-
-	return Address{}
+	return c.findAddressByID(id)
 }
 
 func (c *Client) SetMemo(id, memo string) Address {
 	body := url.Values{"action": []string{"edit_memo"}, "id": []string{id}, "memo": []string{memo}}
 	c.browser.PostForm(MANAGEMENT_URL, body)
 
+	return c.findAddressByID(id)
+}
+
+func (c *Client) Delete(id string) {
+	body := url.Values{"action": []string{"delete"}, "id": []string{id}}
+	c.browser.PostForm(MANAGEMENT_URL, body)
+}
+
+func (c *Client) findAddressByID(id string) Address {
 	for _, address := range c.List() {
 		if address.Email == id {
 			return address
@@ -100,9 +97,4 @@ func (c *Client) SetMemo(id, memo string) Address {
 	}
 
 	return Address{}
-}
-
-func (c *Client) Delete(id string) {
-	body := url.Values{"action": []string{"delete"}, "id": []string{id}}
-	c.browser.PostForm(MANAGEMENT_URL, body)
 }
