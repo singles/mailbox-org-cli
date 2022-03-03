@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -25,7 +26,7 @@ type SetMemoCommand struct {
 }
 
 type CreateCommand struct {
-	Memo string
+	Memo string `default:""`
 }
 
 type args struct {
@@ -47,26 +48,39 @@ func main() {
 
 	stdin := os.Stdin
 	stat, _ := stdin.Stat()
-
 	if (stat.Mode() & os.ModeCharDevice) != 0 {
 		fmt.Println("You must pipe password into this command, exiting.")
 		os.Exit(1)
 	}
 
+	client := NewClient(args.Username, readPasswordFromStdin(stdin))
+
+	var data interface{}
 	switch {
 	case args.List != nil:
-		fmt.Println("listing addressess")
+		data = client.List()
 	case args.Renew != nil:
-		fmt.Println("Renewing address")
+		data = client.Renew(args.Renew.ID)
 	case args.Delete != nil:
-		fmt.Println("Creating address")
+		client.Delete(args.Delete.ID)
 	case args.Create != nil:
-		fmt.Println("Adding disposable address")
+		data = client.Create(args.Create.Memo)
 	case args.SetMemo != nil:
-		fmt.Println("Setting memo")
+		data = client.SetMemo(args.SetMemo.ID, args.SetMemo.Memo)
 	default:
 		p.Fail("Invalid command")
 	}
+
+	if data != nil {
+		output, err := json.MarshalIndent(data, "", "  ")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(string(output))
+	}
+
 }
 
 func readPasswordFromStdin(stdin io.Reader) string {
