@@ -8,8 +8,6 @@ import (
 	"gopkg.in/headzoo/surf.v1"
 )
 
-const MANAGEMENT_URL = "https://manage.mailbox.org/index.php?p=account_disposable_aliases"
-
 type Address struct {
 	Email   string `json:"email"`
 	Memo    string `json:"memo"`
@@ -59,10 +57,7 @@ func (c *Client) List() []Address {
 }
 
 func (c *Client) Create(memo string) Address {
-	c.browser.PostForm(
-		MANAGEMENT_URL,
-		toUrlValues(FormPayload{"action": "create"}),
-	)
+	c.executeAction(FormPayload{"action": "create"})
 
 	addresses := c.List()
 	newAddress := addresses[len(addresses)-1]
@@ -75,28 +70,29 @@ func (c *Client) Create(memo string) Address {
 }
 
 func (c *Client) Renew(id string) Address {
-	c.browser.PostForm(
-		MANAGEMENT_URL,
-		toUrlValues(FormPayload{"action": "renew", "id": id}),
-	)
+	c.executeAction(FormPayload{"action": "renew", "id": id})
 
 	return c.findAddressByID(id)
 }
 
 func (c *Client) SetMemo(id, memo string) Address {
-	c.browser.PostForm(
-		MANAGEMENT_URL,
-		toUrlValues(FormPayload{"action": "edit_memo", "id": id, "memo": memo}),
-	)
+	c.executeAction(FormPayload{"action": "edit_memo", "id": id, "memo": memo})
 
 	return c.findAddressByID(id)
 }
 
 func (c *Client) Delete(id string) {
-	c.browser.PostForm(
-		MANAGEMENT_URL,
-		toUrlValues(FormPayload{"action": "delete", "id": id}),
-	)
+	c.executeAction(FormPayload{"action": "delete", "id": id})
+}
+
+func (c *Client) executeAction(data FormPayload) {
+	values := url.Values{}
+
+	for key, val := range data {
+		values.Set(key, val)
+	}
+
+	c.browser.PostForm("https://manage.mailbox.org/index.php?p=account_disposable_aliases", values)
 }
 
 func (c *Client) findAddressByID(id string) Address {
@@ -107,14 +103,4 @@ func (c *Client) findAddressByID(id string) Address {
 	}
 
 	return Address{}
-}
-
-func toUrlValues(data FormPayload) url.Values {
-	values := url.Values{}
-
-	for key, val := range data {
-		values.Set(key, val)
-	}
-
-	return values
 }
