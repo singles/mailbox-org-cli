@@ -20,6 +20,8 @@ type Client struct {
 	browser *browser.Browser
 }
 
+type FormPayload map[string]string
+
 func NewClient(username, password string) *Client {
 	client := &Client{browser: surf.NewBrowser()}
 
@@ -57,8 +59,10 @@ func (c *Client) List() []Address {
 }
 
 func (c *Client) Create(memo string) Address {
-	body := url.Values{"action": []string{"create"}}
-	c.browser.PostForm(MANAGEMENT_URL, body)
+	c.browser.PostForm(
+		MANAGEMENT_URL,
+		toUrlValues(FormPayload{"action": "create"}),
+	)
 
 	addresses := c.List()
 	newAddress := addresses[len(addresses)-1]
@@ -71,22 +75,28 @@ func (c *Client) Create(memo string) Address {
 }
 
 func (c *Client) Renew(id string) Address {
-	body := url.Values{"action": []string{"renew"}, "id": []string{id}}
-	c.browser.PostForm(MANAGEMENT_URL, body)
+	c.browser.PostForm(
+		MANAGEMENT_URL,
+		toUrlValues(FormPayload{"action": "renew", "id": id}),
+	)
 
 	return c.findAddressByID(id)
 }
 
 func (c *Client) SetMemo(id, memo string) Address {
-	body := url.Values{"action": []string{"edit_memo"}, "id": []string{id}, "memo": []string{memo}}
-	c.browser.PostForm(MANAGEMENT_URL, body)
+	c.browser.PostForm(
+		MANAGEMENT_URL,
+		toUrlValues(FormPayload{"action": "edit_memo", "id": id, "memo": memo}),
+	)
 
 	return c.findAddressByID(id)
 }
 
 func (c *Client) Delete(id string) {
-	body := url.Values{"action": []string{"delete"}, "id": []string{id}}
-	c.browser.PostForm(MANAGEMENT_URL, body)
+	c.browser.PostForm(
+		MANAGEMENT_URL,
+		toUrlValues(FormPayload{"action": "delete", "id": id}),
+	)
 }
 
 func (c *Client) findAddressByID(id string) Address {
@@ -97,4 +107,14 @@ func (c *Client) findAddressByID(id string) Address {
 	}
 
 	return Address{}
+}
+
+func toUrlValues(data FormPayload) url.Values {
+	values := url.Values{}
+
+	for key, val := range data {
+		values.Set(key, val)
+	}
+
+	return values
 }
