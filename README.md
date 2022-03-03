@@ -8,6 +8,23 @@ What it does it pretends to be browser and interacts with management panel in go
 
 ## Usage
 
+```shell
+$ mailbox-org-cli --help
+Commad line "client" for mailbox.org dispossable addresses feature
+Usage: mailbox-org-cli --username USERNAME <command> [<args>]
+
+Options:
+  --username USERNAME    mailbox.org username
+  --help, -h             display this help and exit
+
+Commands:
+  list                   list dispossable addresses
+  renew                  renew dispossable address
+  delete                 delete dispossable address
+  set-memo               set-memo on existing dispossable address
+  create                 create new dispossable address with optional memo
+```
+
 `mailbox-org-cli` requires `--username` (like `you@customdomain.com`) and password being passed in via _stdin_.
 
 ```shell
