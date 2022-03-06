@@ -30,12 +30,14 @@ type CreateCommand struct {
 }
 
 type args struct {
-	Username string          `arg:"required,env:MAILBOX_ORG_USERNAME" help:"mailbox.org username"`
-	List     *ListCommand    `arg:"subcommand:list" help:"list dispossable addresses"`
-	Renew    *RenewCommand   `arg:"subcommand:renew" help:"renew dispossable address"`
-	Delete   *DeleteCommand  `arg:"subcommand:delete" help:"delete dispossable address"`
-	SetMemo  *SetMemoCommand `arg:"subcommand:set-memo" help:"set-memo on existing dispossable address"`
-	Create   *CreateCommand  `arg:"subcommand:create" help:"create new dispossable address with optional memo"`
+	Username        string          `arg:"required,env:MAILBOX_ORG_USERNAME" help:"mailbox.org username"`
+	Password        string          `arg:"env:MAILBOX_ORG_PASSWORD" help:"mailbox.org password"`
+	PasswordOnStdin bool            `arg:"--password-on-stdin" help:"read password from stdin"`
+	List            *ListCommand    `arg:"subcommand:list" help:"list dispossable addresses"`
+	Renew           *RenewCommand   `arg:"subcommand:renew" help:"renew dispossable address"`
+	Delete          *DeleteCommand  `arg:"subcommand:delete" help:"delete dispossable address"`
+	SetMemo         *SetMemoCommand `arg:"subcommand:set-memo" help:"set-memo on existing dispossable address"`
+	Create          *CreateCommand  `arg:"subcommand:create" help:"create new dispossable address with optional memo"`
 }
 
 func (args) Description() string {
@@ -46,14 +48,22 @@ func main() {
 	var args args
 	p := arg.MustParse(&args)
 
-	stdin := os.Stdin
-	stat, _ := stdin.Stat()
-	if (stat.Mode() & os.ModeCharDevice) != 0 {
-		fmt.Println("You must pipe password into this command, exiting.")
-		os.Exit(1)
+	if args.Password == "" && args.PasswordOnStdin {
+		stdin := os.Stdin
+		stat, _ := stdin.Stat()
+		if (stat.Mode() & os.ModeCharDevice) != 0 {
+			fmt.Fprintf(os.Stderr, "You must pipe password into this command, exiting.")
+			os.Exit(1)
+		}
+
+		args.Password = readPasswordFromStdin(stdin)
 	}
 
-	client, err := NewClient(args.Username, readPasswordFromStdin(stdin))
+	if args.Password == "" {
+		p.Fail("You must one of these ways for passing password: --password argument, --password-on-stdin flag or MAILBOX_ORG_PASSWORD env variable")
+	}
+
+	client, err := NewClient(args.Username, args.Password)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)

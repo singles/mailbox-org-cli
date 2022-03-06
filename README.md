@@ -11,10 +11,12 @@ What it does it pretends to be browser and interacts with management panel in go
 ```shell
 $ mailbox-org-cli --help
 Commad line "client" for mailbox.org dispossable addresses feature
-Usage: mailbox-org-cli --username USERNAME <command> [<args>]
+Usage: mailbox-org-cli --username USERNAME [--password PASSWORD] [--password-on-stdin] <command> [<args>]
 
 Options:
-  --username USERNAME    mailbox.org username
+  --username USERNAME    mailbox.org username [env: MAILBOX_ORG_USERNAME]
+  --password PASSWORD    mailbox.org password [env: MAILBOX_ORG_PASSWORD]
+  --password-on-stdin    read password from stdin
   --help, -h             display this help and exit
 
 Commands:
@@ -25,10 +27,10 @@ Commands:
   create                 create new dispossable address with optional memo
 ```
 
-`mailbox-org-cli` requires `--username` (like `you@customdomain.com`) and password being passed in via _stdin_.
+Here is an example how you can use this command with password manager:
 
 ```shell
-$ pass Email/mailbox.org | mailbox-org-cli --username you@example.com
+$ pass Email/mailbox.org | mailbox-org-cli --username you@example.com --password-on-stdin list
 
 [
   {
@@ -38,22 +40,12 @@ $ pass Email/mailbox.org | mailbox-org-cli --username you@example.com
   },
   {
     "email": "aks92jasl943@temp.mailbox.org",
-    "memo": "<no memo>", # there's no memo set
+    "memo": "", # there's no memo set
     "expires": "expires 31 Mar, 2022"
   }
 ]
 ```
 
-Note that `mailbox-org-cli` doesn't care how your password will happen to be in _stdin_, it just has to be there.
-
-You can use password manager like above. (see [`pass`](https://www.passwordstore.org/), but any password manager with CLI will do).
-
-You can store password in some file on encrypted volume: `mailbox-org-cli --username you@example.com < /media/ENCRYPTED_VOLUME/path/to/file/with/password`.
-
-You can store password in ENV variable and then: `echo $MAILBOX_ORG_PASS | mailbox-org-cli --username you@example.com`.
-
-Or you can just echo it directly if you like living on the edge: `echo 'mypassword' | mailbox-org-cli --username you@example.com`.
-
 ## Building
 
-You need [Go](https://go.dev/) in version at least `1.17`. In the project's root directory run `go build`.
+You need [Go](https://go.dev/) in version at least `1.17`. In the project's root directory run `go build .`.
