@@ -30,7 +30,7 @@ type CreateCommand struct {
 }
 
 type args struct {
-	Username string          `arg:"required" help:"mailbox.org username"`
+	Username string          `arg:"required,env:MAILBOX_ORG_USERNAME" help:"mailbox.org username"`
 	List     *ListCommand    `arg:"subcommand:list" help:"list dispossable addresses"`
 	Renew    *RenewCommand   `arg:"subcommand:renew" help:"renew dispossable address"`
 	Delete   *DeleteCommand  `arg:"subcommand:delete" help:"delete dispossable address"`
