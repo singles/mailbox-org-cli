@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/url"
+	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/browser"
@@ -49,7 +51,7 @@ func (c *Client) List() []Address {
 		addresses = append(addresses, Address{
 			Email:   email,
 			Memo:    memo,
-			Expires: expires,
+			Expires: toISO8061(strings.Replace(expires, "expires  ", "", 1)),
 		})
 	})
 
@@ -103,4 +105,13 @@ func (c *Client) findAddressByID(id string) Address {
 	}
 
 	return Address{}
+}
+
+const EXPIRES_DATE_LAYOUT = "2 Jan, 2006"
+const ISO8061_DATE_LAYOUT = "2006-01-02"
+
+func toISO8061(expires string) string {
+	t, _ := time.Parse(EXPIRES_DATE_LAYOUT, expires)
+
+	return t.Format(ISO8061_DATE_LAYOUT)
 }
