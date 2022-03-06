@@ -36,12 +36,12 @@ $ pass Email/mailbox.org | mailbox-org-cli --username you@example.com --password
   {
     "email": "kajsdlkj230@temp.mailbox.org",
     "memo": "foo bar",
-    "expires": "expires 28 Feb, 2022"
+    "expires": "2022-02-28"
   },
   {
     "email": "aks92jasl943@temp.mailbox.org",
     "memo": "", # there's no memo set
-    "expires": "expires 31 Mar, 2022"
+    "expires": "2022-03-31"
   }
 ]
 ```
