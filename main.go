@@ -60,7 +60,7 @@ func main() {
 	}
 
 	if args.Password == "" {
-		p.Fail("You must one of these ways for passing password: --password argument, --password-on-stdin flag or MAILBOX_ORG_PASSWORD env variable")
+		p.Fail("You must one of these ways for passing password, in recommended order: --password-on-stdin flag, MAILBOX_ORG_PASSWORD env variable, --password argument")
 	}
 
 	client, err := NewClient(args.Username, args.Password)
