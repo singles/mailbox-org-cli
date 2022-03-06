@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"time"
@@ -22,22 +23,29 @@ type Client struct {
 
 type FormPayload map[string]string
 
-func NewClient(username, password string) *Client {
+func NewClient(username, password string) (*Client, error) {
 	client := &Client{browser: surf.NewBrowser()}
+	client.browser.AddRequestHeader("Accept-Language", "en-US,en;q=0.5")
 
 	err := client.browser.Open("https://manage.mailbox.org/login.php?redirect=account_disposable_aliases")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fm, _ := client.browser.Form("#io-ox-login-form")
 	fm.Input("username", username)
 	fm.Input("password", password)
 	if fm.Submit() != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return client
+	errorBox := client.browser.Find("#io-ox-login-container .error")
+
+	if errorBox.Length() > 0 {
+		return nil, fmt.Errorf(strings.TrimSpace(errorBox.Text()))
+	}
+
+	return client, nil
 }
 
 func (c *Client) List() []Address {
