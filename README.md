@@ -46,6 +46,12 @@ $ pass Email/mailbox.org | mailbox-org-cli --username you@example.com --password
 ]
 ```
 
+All output is JSON, so you will probably need something like [`jq`](https://github.com/stedolan/jq) to extract specific data. Using example output above this command will copy first item's email into clipboard (`pbcopy` on macOS):
+
+```shell
+$ mailbox-org-cli ... list | jq --raw '.[0].email' | pbcopy
+```
+
 ## Building
 
 You need [Go](https://go.dev/) in version at least `1.17`. In the project's root directory run `go build .`.
