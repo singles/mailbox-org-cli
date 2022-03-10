@@ -17,7 +17,7 @@ If you have Go installed, you can either:
 
 ## Usage
 
-```shell
+```text
 $ mailbox-org-cli --help
 Commad line "client" for mailbox.org dispossable addresses feature
 Usage: mailbox-org-cli --username USERNAME [--password PASSWORD] [--password-on-stdin] <command> [<args>]
@@ -38,7 +38,7 @@ Commands:
 
 Here is an example how you can use this command with password manager:
 
-```shell
+```text
 $ pass Email/mailbox.org | mailbox-org-cli --username you@example.com --password-on-stdin list
 
 [
@@ -57,7 +57,7 @@ $ pass Email/mailbox.org | mailbox-org-cli --username you@example.com --password
 
 All output is JSON, so you will probably need something like [`jq`](https://github.com/stedolan/jq) to extract specific data. Using example output above this command will copy first item's email into clipboard (`pbcopy` on macOS):
 
-```shell
+```text
 $ mailbox-org-cli ... list | jq --raw '.[0].email' | pbcopy
 ```
 
