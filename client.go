@@ -63,7 +63,7 @@ func (c *Client) List() []Address {
 	return addresses
 }
 
-func (c *Client) Create(memo string) Address {
+func (c *Client) Create(memo string) (Address, error) {
 	c.executeAction(FormPayload{"action": "create"})
 
 	addresses := c.List()
@@ -73,7 +73,12 @@ func (c *Client) Create(memo string) Address {
 		c.SetMemo(newAddress.Email, memo)
 	}
 
-	return c.findAddressByID(newAddress.Email)
+	errorBox := c.browser.Find("#content .error")
+	if errorBox.Length() > 0 {
+		return Address{}, fmt.Errorf(strings.TrimSpace(errorBox.Text()))
+	}
+
+	return c.findAddressByID(newAddress.Email), nil
 }
 
 func (c *Client) Renew(id string) Address {

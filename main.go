@@ -79,11 +79,16 @@ func main() {
 	case args.Delete != nil:
 		client.Delete(args.Delete.ID)
 	case args.Create != nil:
-		data = client.Create(args.Create.Memo)
+		data, err = client.Create(args.Create.Memo)
 	case args.SetMemo != nil:
 		data = client.SetMemo(args.SetMemo.ID, args.SetMemo.Memo)
 	default:
 		p.Fail("Invalid command")
+	}
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
 	}
 
 	if data != nil {
@@ -95,7 +100,6 @@ func main() {
 
 		fmt.Println(string(output))
 	}
-
 }
 
 func readPasswordFromStdin(stdin io.Reader) string {
