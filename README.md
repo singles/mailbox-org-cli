@@ -52,6 +52,12 @@ All output is JSON, so you will probably need something like [`jq`](https://gith
 $ mailbox-org-cli ... list | jq --raw '.[0].email' | pbcopy
 ```
 
+### Possible use cases
+
+* mailbox.org's dispossable addresses have expiry date. But can be extended as many times as required. So if you want to have "permanent" address, just set cron every, lets say, 2 weeks with `mailbox-org-cli renew`.
+* as this is CLI tool, you can easily integrate it with some launcher like [Alfred](https://www.alfredapp.com/)
+* ...your idea :)
+
 ## Building
 
 You need [Go](https://go.dev/) in version at least `1.17`. In the project's root directory run `go build .`.
