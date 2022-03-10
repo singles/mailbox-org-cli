@@ -6,6 +6,15 @@ TBH it's hard to call it client - it **does not** use API for achieve its goals,
 
 What it does it pretends to be browser and interacts with management panel in good-old form-based way.
 
+## Installation
+
+You can download prebuilt binary from [Releases](https://github.com/singles/mailbox-org-cli/releases) page, but at the moment macOS binary **isn't** signed & notarized so you will get a warning that application cannot be verified.
+
+If you have Go installed, you can either:
+  * install it from source `go install github.com/singles/mailbox-org-cli@latest`
+  * clone repository and build it by yourself: `go build .` (requires Go 1.17)
+
+
 ## Usage
 
 ```shell
@@ -57,7 +66,3 @@ $ mailbox-org-cli ... list | jq --raw '.[0].email' | pbcopy
 * mailbox.org's dispossable addresses have expiry date. But can be extended as many times as required. So if you want to have "permanent" address, just set cron every, lets say, 2 weeks with `mailbox-org-cli renew`.
 * as this is CLI tool, you can easily integrate it with some launcher like [Alfred](https://www.alfredapp.com/)
 * ...your idea :)
-
-## Building
-
-You need [Go](https://go.dev/) in version at least `1.17`. In the project's root directory run `go build .`.
