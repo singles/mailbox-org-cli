@@ -34,8 +34,16 @@ func NewClient(username, password string) (*Client, error) {
 	}
 
 	fm, _ := client.browser.Form("#io-ox-login-form")
-	fm.Input("username", username)
-	fm.Input("password", password)
+	err = fm.Input("username", username)
+	if fm.Submit() != nil {
+		return nil, err
+	}
+
+	err = fm.Input("password", password)
+	if fm.Submit() != nil {
+		return nil, err
+	}
+
 	if fm.Submit() != nil {
 		return nil, err
 	}
@@ -64,13 +72,19 @@ func (c *Client) List() []Address {
 }
 
 func (c *Client) Create(memo string) (Address, error) {
-	c.executeAction(FormPayload{"action": "create"})
+	err := c.executeAction(FormPayload{"action": "create"})
+	if err != nil {
+		return Address{}, err
+	}
 
 	addresses := c.List()
 	newAddress := addresses[len(addresses)-1]
 
 	if memo != "" {
-		c.SetMemo(newAddress.Email, memo)
+		_, err = c.SetMemo(newAddress.Email, memo)
+		if err != nil {
+			return Address{}, err
+		}
 	}
 
 	errorBox := c.browser.Find("#content .error")
@@ -81,30 +95,36 @@ func (c *Client) Create(memo string) (Address, error) {
 	return c.findAddressByID(newAddress.Email), nil
 }
 
-func (c *Client) Renew(id string) Address {
-	c.executeAction(FormPayload{"action": "renew", "id": id})
+func (c *Client) Renew(id string) (Address, error) {
+	err := c.executeAction(FormPayload{"action": "renew", "id": id})
+	if err != nil {
+		return Address{}, err
+	}
 
-	return c.findAddressByID(id)
+	return c.findAddressByID(id), nil
 }
 
-func (c *Client) SetMemo(id, memo string) Address {
-	c.executeAction(FormPayload{"action": "edit_memo", "id": id, "memo": memo})
+func (c *Client) SetMemo(id, memo string) (Address, error) {
+	err := c.executeAction(FormPayload{"action": "edit_memo", "id": id, "memo": memo})
+	if err != nil {
+		return Address{}, err
+	}
 
-	return c.findAddressByID(id)
+	return c.findAddressByID(id), nil
 }
 
-func (c *Client) Delete(id string) {
-	c.executeAction(FormPayload{"action": "delete", "id": id})
+func (c *Client) Delete(id string) error {
+	return c.executeAction(FormPayload{"action": "delete", "id": id})
 }
 
-func (c *Client) executeAction(data FormPayload) {
+func (c *Client) executeAction(data FormPayload) error {
 	values := url.Values{}
 
 	for key, val := range data {
 		values.Set(key, val)
 	}
 
-	c.browser.PostForm("https://manage.mailbox.org/index.php?p=account_disposable_aliases", values)
+	return c.browser.PostForm("https://manage.mailbox.org/index.php?p=account_disposable_aliases", values)
 }
 
 func (c *Client) findAddressByID(id string) Address {

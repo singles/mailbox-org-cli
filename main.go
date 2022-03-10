@@ -75,13 +75,13 @@ func main() {
 	case args.List != nil:
 		data = client.List()
 	case args.Renew != nil:
-		data = client.Renew(args.Renew.ID)
+		data, err = client.Renew(args.Renew.ID)
 	case args.Delete != nil:
-		client.Delete(args.Delete.ID)
+		err = client.Delete(args.Delete.ID)
 	case args.Create != nil:
 		data, err = client.Create(args.Create.Memo)
 	case args.SetMemo != nil:
-		data = client.SetMemo(args.SetMemo.ID, args.SetMemo.Memo)
+		data, err = client.SetMemo(args.SetMemo.ID, args.SetMemo.Memo)
 	default:
 		p.Fail("Invalid command")
 	}
