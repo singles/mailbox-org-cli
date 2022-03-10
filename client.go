@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -52,12 +53,10 @@ func (c *Client) List() []Address {
 	addresses := []Address{}
 
 	c.browser.Find(".ox-list li").Each(func(_ int, s *goquery.Selection) {
-		expires := s.Find(".content div").Text()
-
 		addresses = append(addresses, Address{
 			Email:   s.Find(".title div").Text(),
 			Memo:    s.Find(".memo #memo").AttrOr("value", ""),
-			Expires: toISO8061(strings.Replace(expires, "expires  ", "", 1)),
+			Expires: expiresTextToISO8061Date(s.Find(".content div").Text()),
 		})
 	})
 
@@ -116,8 +115,11 @@ func (c *Client) findAddressByID(id string) Address {
 const EXPIRES_DATE_LAYOUT = "2 Jan, 2006"
 const ISO8061_DATE_LAYOUT = "2006-01-02"
 
-func toISO8061(expires string) string {
-	t, _ := time.Parse(EXPIRES_DATE_LAYOUT, expires)
+var re *regexp.Regexp = regexp.MustCompile(`\d{1,2} \w{3}, \d{4}$`)
+
+func expiresTextToISO8061Date(expires string) string {
+	match := re.FindString(expires)
+	t, _ := time.Parse(EXPIRES_DATE_LAYOUT, match)
 
 	return t.Format(ISO8061_DATE_LAYOUT)
 }
