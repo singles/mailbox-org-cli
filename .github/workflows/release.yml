@@ -22,3 +22,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.os }}
         goarch: ${{ matrix.arch }}
+        extra_files: LICENSE README.md
