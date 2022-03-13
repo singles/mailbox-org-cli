@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [darwin, linux, windows]
         arch: [amd64, arm64]
-        exclude:         
+        exclude:
           - os: windows
             arch: arm64
     name: release linux/amd64
@@ -23,3 +23,4 @@ jobs:
         goos: ${{ matrix.os }}
         goarch: ${{ matrix.arch }}
         extra_files: LICENSE README.md
+        pre_command: export CGO_ENABLED=0
