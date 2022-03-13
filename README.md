@@ -18,8 +18,8 @@ If you have Go installed, you can either:
 ## Usage
 
 ```text
-$ mailbox-org-cli --help
 Commad line "client" for mailbox.org dispossable addresses feature
+mailbox-org-cli 0.1.0
 Usage: mailbox-org-cli --username USERNAME [--password PASSWORD] [--password-on-stdin] <command> [<args>]
 
 Options:
@@ -27,6 +27,7 @@ Options:
   --password PASSWORD    mailbox.org password [env: MAILBOX_ORG_PASSWORD]
   --password-on-stdin    read password from stdin
   --help, -h             display this help and exit
+  --version              display version and exit
 
 Commands:
   list                   list dispossable addresses

@@ -44,6 +44,10 @@ func (args) Description() string {
 	return "Commad line \"client\" for mailbox.org dispossable addresses feature"
 }
 
+func (args) Version() string {
+	return "mailbox-org-cli 0.1.0"
+}
+
 func main() {
 	var args args
 	p := arg.MustParse(&args)
