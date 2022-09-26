@@ -41,7 +41,7 @@ type args struct {
 }
 
 func (args) Description() string {
-	return "Commad line \"client\" for mailbox.org dispossable addresses feature"
+	return "Command line \"client\" for mailbox.org dispossable addresses feature"
 }
 
 func (args) Version() string {

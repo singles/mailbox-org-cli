@@ -18,7 +18,7 @@ If you have Go installed, you can either:
 ## Usage
 
 ```text
-Commad line "client" for mailbox.org dispossable addresses feature
+Command line "client" for mailbox.org dispossable addresses feature
 mailbox-org-cli 0.1.0
 Usage: mailbox-org-cli --username USERNAME [--password PASSWORD] [--password-on-stdin] <command> [<args>]
 
